@@ -1,10 +1,11 @@
 <?php
+
+include('./config/db_connect.php');
+
 $errors = array('name' => '', 'price' => '', 'color' => '');
 
 $name = $color = '';
 $price = null;
-
-
 
 if (isset($_POST['submit'])) {
     // Check valid name
@@ -38,7 +39,23 @@ if (isset($_POST['submit'])) {
     }
 
     if (!array_filter($errors)) {
-        header('Location: index.php');
+
+        $name = mysqli_real_escape_string($conn, $_POST['name']);
+        $price = mysqli_real_escape_string($conn, $_POST['price']);
+        $color = mysqli_real_escape_string($conn, $_POST['color']);
+
+        // create sql
+        $sql = "INSERT INTO products(name, price, color) VALUES('$name','$price', '$color')";
+
+
+        // save to db and check
+        if (mysqli_query($conn, $sql)) {
+            // success
+            header('Location: index.php');
+        } else {
+            // error
+            echo 'query error: ' . mysqli_error($conn);
+        };
     }
 }
 
